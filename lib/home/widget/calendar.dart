@@ -14,22 +14,44 @@ class _CalendarState extends State<Calendar> {
   @override
   Widget build(BuildContext context) {
 
-    List<int> listdays = List<int>.generate(
+    List<int> listDays = List<int>.generate(
       DateTime(currentDate.year, currentDate.month + 1 , 0).day, 
       (int index) => index + 1, 
     );
+
+    print("Lista de Dias: $listDays");
 
     List<int> daysOfPrevMonth = List<int>.generate(
       DateTime(currentDate.year, currentDate.month, 0).weekday, 
       (index) => DateTime(currentDate.year, currentDate.month, 0).day - index,
     ).reversed.toList();
 
+    print("Mes anterior: $daysOfPrevMonth");
+
     List<int> daysOfNextMonth = List<int>.generate(
-      7 - (listdays.length + daysOfPrevMonth.length) % 7 , 
+      7 - (listDays.length + daysOfPrevMonth.length) % 7 , 
       (int index) => index + 1,
     );
 
-    List<String> weekDay = ["Dom", "Ter", "Qua", "Qui", "Sex", "Sab", "Seg"];
+    print("Proximo mes: $daysOfNextMonth");
+
+    List<String> months = [
+      '',
+      'Janeiro',
+      'Fevereiro',
+      'Março',
+      'Abril',
+      'Maio',
+      'Junho',
+      'Julho',
+      'Agosto',
+      'Setembro',
+      'Outubro',
+      'Novembro',
+      'Dezembro'
+    ];
+
+    List<String> weekDay = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom"];
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 14),
@@ -46,12 +68,17 @@ class _CalendarState extends State<Calendar> {
                 }, 
                 icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white,)
               ),
-              Text(
-                "${currentDate.month}",
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold
+              Row(
+                children: List.generate(
+                  months.length - 1,
+                  (index) => Text(
+                    currentDate.month == index ? months[index] : "",
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold
+                    ),
+                  ),
                 ),
               ),
               IconButton(
@@ -69,11 +96,14 @@ class _CalendarState extends State<Calendar> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: List.generate(
               weekDay.length, 
-              (index) => Text(
-                weekDay[index],
-                style: const TextStyle(
-                  color: Colors.orange,
-                  fontSize: 20
+              (index) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Text(
+                  weekDay[index],
+                  style: const TextStyle(
+                    color: Colors.orange,
+                    fontSize: 20
+                  ),
                 ),
               ),
             ),
@@ -81,12 +111,12 @@ class _CalendarState extends State<Calendar> {
           Expanded(
             child: GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 7
+                crossAxisCount: 7,
               ), 
-              itemCount: daysOfPrevMonth.length + listdays.length + daysOfNextMonth.length,
+              itemCount: daysOfPrevMonth.length + listDays.length + daysOfNextMonth.length,
               itemBuilder: (context, index){
 
-                List<int> combinedList = [...daysOfPrevMonth, ...listdays, ...daysOfNextMonth];
+                List<int> combinedList = [...daysOfPrevMonth, ...listDays, ...daysOfNextMonth];
                 int day = combinedList[index];
 
                 return InkWell(
@@ -96,18 +126,16 @@ class _CalendarState extends State<Calendar> {
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
-                      color: (day <= daysOfPrevMonth.last || day > (daysOfPrevMonth.length + listdays.length)) 
-                      ? Colors.grey[900] 
-                      : Colors.black
+                      color: (daysOfPrevMonth.contains(day) && daysOfNextMonth.contains(day)) 
+                      ? Colors.black 
+                      : Colors.grey[900],
                     ),
                     child: Center(
                       child: Text(
                         "$day",
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 20,
-                          color: (day <= daysOfPrevMonth.last || day > (daysOfPrevMonth.length + listdays.length)) 
-                          ? Colors.grey 
-                          : Colors.white,
+                          color: Colors.white,
                         ),
                       ),
                     ),
@@ -119,5 +147,5 @@ class _CalendarState extends State<Calendar> {
         ],
       ),
     );
-  }
+  }  
 }
