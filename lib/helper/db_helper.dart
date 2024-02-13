@@ -1,3 +1,4 @@
+import 'package:flutter_calendar/model/task_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -5,10 +6,11 @@ String taskTable = "taskTable";
 String id = "idColumn";
 String task = "taskColumn";
 String dateTime = "dateColumn";
-int isDone = 1;
 
 class DataBaseHelper {
   DataBaseHelper.internal();
+
+  factory DataBaseHelper() => instance;
 
   static final DataBaseHelper instance = DataBaseHelper.internal();
   static Database? _db;
@@ -27,11 +29,57 @@ class DataBaseHelper {
     final String path = join(dbPath, "task_db.db");
 
     Database taskDb = await openDatabase(path, version: 1, onCreate: (db, newerVersion) async {
-        await db.execute('CREATE TABLE $taskTable ($id INTEGER PRIMARY KEY AUTOINCREMENT, $task TEXT, $dateTime TEXT,'
-        '$isDone INTEGER)');
+        await db.execute('CREATE TABLE $taskTable ($id INTEGER PRIMARY KEY AUTOINCREMENT, $task TEXT, $dateTime TEXT,');
       },
     );
 
     return taskDb;
   }
+
+  Future<TaskModel> getTask() async {
+    Database taskDb = await db;
+
+    List<Map<String, dynamic>> listOfTask = await taskDb.query(
+      taskTable,
+      columns: [
+        id,
+        task,
+        dateTime,
+      ],
+      where: "idColumn = ?",
+      whereArgs: [id],
+    );
+
+    return TaskModel.fromJson(listOfTask.first);
+  }
+
+  Future<List<TaskModel>> getAllTasks() async {
+    Database taskDb = await db;
+
+    List listOfMap = await taskDb.rawQuery("SELECT * FROM $taskTable");
+    List<TaskModel> listOftasks = [];
+
+    for(Map<String,dynamic> map in listOfMap){
+      listOftasks.add(TaskModel.fromJson(map));
+    }
+
+    return listOftasks;
+  }
+
+  Future<void> addTask(TaskModel taskModel) async {
+    Database taskDb = await db;
+
+    Map<String, dynamic> taskMap = taskModel.toJson();
+
+    await taskDb.insert(taskTable, taskMap);
+  }
+
+  // Future<int> updateTask(int id) async {
+  //   Database taskDb = await db;
+
+  //   return await taskDb.update(
+  //     taskTable, 
+      
+  //   );
+  //}
 }

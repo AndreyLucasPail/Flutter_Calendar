@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calendar/task/screen/task_screen.dart';
 
 class Calendar extends StatefulWidget {
   const Calendar({super.key,});
@@ -120,7 +121,11 @@ class _CalendarState extends State<Calendar> {
                 int day = combinedList[index];
 
                 return InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const TaskScreen())
+                    );
+                  },
                   child: Container(
                     margin: const EdgeInsets.all(3),
                     padding: const EdgeInsets.all(8),

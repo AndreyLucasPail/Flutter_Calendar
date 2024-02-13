@@ -8,7 +8,7 @@ class TaskModel {
   String? task;
   DateTime? dateTime;
 
-  factory TaskModel.fromJson(json){
+  factory TaskModel.fromJson(Map<String, dynamic> json){
     return TaskModel(
       task : json["task"], 
       dateTime: json["dateTime"],
