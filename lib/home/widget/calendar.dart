@@ -48,7 +48,7 @@ class _CalendarState extends State<Calendar> {
       'Setembro',
       'Outubro',
       'Novembro',
-      'Dezembro'
+      'Dezembro',
     ];
 
     List<String> weekDay = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom"];
@@ -70,7 +70,7 @@ class _CalendarState extends State<Calendar> {
               ),
               Row(
                 children: List.generate(
-                  months.length - 1,
+                  months.length,
                   (index) => Text(
                     currentDate.month == index ? months[index] : "",
                     style: const TextStyle(
