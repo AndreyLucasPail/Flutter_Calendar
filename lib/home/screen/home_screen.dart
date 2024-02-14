@@ -19,10 +19,7 @@ class _HomePageState extends State<HomePage> {
         title: const Text("Calendario"),
         centerTitle: true,
       ),
-      body: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16),
-        child: const Calendar()
-      ),
+      body: const Calendar(),
     );
   }
 }

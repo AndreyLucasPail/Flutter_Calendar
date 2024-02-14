@@ -10,7 +10,8 @@ class Calendar extends StatefulWidget {
 
 class _CalendarState extends State<Calendar> {
 
-  DateTime currentDate = DateTime.now();  
+  DateTime currentDate = DateTime.now();
+  DateTime currentMonth = DateTime.now();   
 
   @override
   Widget build(BuildContext context) {
@@ -135,13 +136,13 @@ class _CalendarState extends State<Calendar> {
                     ),
                   );
                 }else if(index < daysOfPrevMonth.length + listDays.length){
-
+      
                   int day = listDays[index - daysOfPrevMonth.length];
-
+      
                   return InkWell(
                     onTap: () {
                       Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => const TaskScreen())
+                        MaterialPageRoute(builder: (context) => TaskScreen(day: day, month: currentDate.month,))
                       );
                     },
                     child: Container(
@@ -149,7 +150,9 @@ class _CalendarState extends State<Calendar> {
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
-                        color: Colors.grey[900],
+                        color: currentDate.day == day && currentDate.month == currentMonth.month 
+                          ? Colors.orange 
+                          : Colors.grey[900],
                       ),
                       child: Center(
                         child: Text(

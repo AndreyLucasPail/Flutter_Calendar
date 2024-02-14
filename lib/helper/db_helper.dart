@@ -6,6 +6,8 @@ String taskTable = "taskTable";
 String id = "idColumn";
 String task = "taskColumn";
 String dateTime = "dateColumn";
+String day = "dayColumn";
+String month = "monthColumn";
 
 class DataBaseHelper {
   DataBaseHelper.internal();
@@ -29,7 +31,8 @@ class DataBaseHelper {
     final String path = join(dbPath, "task_db.db");
 
     Database taskDb = await openDatabase(path, version: 1, onCreate: (db, newerVersion) async {
-        await db.execute('CREATE TABLE $taskTable ($id INTEGER PRIMARY KEY AUTOINCREMENT, $task TEXT, $dateTime TEXT,');
+        await db.execute('CREATE TABLE $taskTable ($id INTEGER PRIMARY KEY AUTOINCREMENT, $task TEXT, $dateTime TEXT,'
+        '$day INTEGER, $month INTEGER');
       },
     );
 
@@ -72,6 +75,23 @@ class DataBaseHelper {
     Map<String, dynamic> taskMap = taskModel.toJson();
 
     await taskDb.insert(taskTable, taskMap);
+  }
+
+  Future<List<TaskModel>> getTaskForDate(int day, int month) async {
+    Database taskDb = await db;
+
+    List<Map<String, dynamic>> listOfTask = await taskDb.query(
+      taskTable,
+      columns: [
+        id,
+        task,
+        dateTime,
+      ],
+      where: "$day = ? AND $month = ?",
+      whereArgs: [day, month],
+    );
+
+    return listOfTask.map((taskMap) => TaskModel.fromJson(taskMap)).toList();
   }
 
   // Future<int> updateTask(int id) async {

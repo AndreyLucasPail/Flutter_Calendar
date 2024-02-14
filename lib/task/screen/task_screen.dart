@@ -5,7 +5,10 @@ import 'package:flutter_calendar/task/tile/task_tile.dart';
 import 'package:flutter_calendar/task/widgets/new_task_button.dart';
 
 class TaskScreen extends StatefulWidget {
-  const TaskScreen({super.key});
+  const TaskScreen({super.key, this.day, this.month});
+
+  final int? day;
+  final int? month;
 
   @override
   State<TaskScreen> createState() => _TaskScreenState();
@@ -14,12 +17,13 @@ class TaskScreen extends StatefulWidget {
 class _TaskScreenState extends State<TaskScreen> {
 
   DataBaseHelper helper = DataBaseHelper();
+  List<TaskModel> tasks = [];
 
   @override
   void initState() {
     super.initState();
 
-    helper.getAllTasks();
+    loadTasksForDate(widget.day!, widget.month!);
   }
 
   @override
@@ -31,26 +35,20 @@ class _TaskScreenState extends State<TaskScreen> {
         title: const Text("Tarefas do dia"),
         centerTitle: true,
       ),
-      body: FutureBuilder<List<TaskModel>>(
-        future: helper.getAllTasks(),
-        builder: (context, snapshot) {
-          if(snapshot.connectionState == ConnectionState.waiting || !snapshot.hasData){
-            return const Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
-              ),
-            );
-          }else{
-            return ListView.builder(
-              itemBuilder: (context, index){
-                List<TaskModel>? task = snapshot.data;
-                return TaskTile(listTask: task![index],);
-              }
-            );
+      body: ListView.builder(
+        itemCount: tasks.length,
+        itemBuilder: (context, index){
+            return TaskTile(listTask: tasks[index],);
           }
-        }
-      ),
-      floatingActionButton: const NewTaskButton(),
+        ),        
+      floatingActionButton: NewTaskButton(day: widget.day, month: widget.month,),
     );
+  }
+
+  Future<void> loadTasksForDate(int day, int month) async {
+    List<TaskModel> loadedTasks = await helper.getTaskForDate(day, month);
+    setState(() {
+      tasks = loadedTasks;
+    });
   }
 }
