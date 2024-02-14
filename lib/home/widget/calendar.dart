@@ -15,26 +15,26 @@ class _CalendarState extends State<Calendar> {
   @override
   Widget build(BuildContext context) {
 
+    int daysInMonth = DateTime(currentDate.year, currentDate.month + 1, 0).day;
+    int weekdayOfFirstDay = DateTime(currentDate.year, currentDate.month, 1).weekday;
+    int currentMonthIndex = currentDate.month;
+
     List<int> listDays = List<int>.generate(
-      DateTime(currentDate.year, currentDate.month + 1 , 0).day, 
+      daysInMonth, 
       (int index) => index + 1, 
     );
 
-    print("Lista de Dias: $listDays");
-
     List<int> daysOfPrevMonth = List<int>.generate(
-      DateTime(currentDate.year, currentDate.month, 0).weekday, 
-      (index) => DateTime(currentDate.year, currentDate.month, 0).day - index,
+      (weekdayOfFirstDay - 1 + 7) % 7, 
+      (index) => DateTime(currentDate.year, currentDate.month, 0).day - (weekdayOfFirstDay - 1) + index,
     ).reversed.toList();
 
-    print("Mes anterior: $daysOfPrevMonth");
-
     List<int> daysOfNextMonth = List<int>.generate(
-      7 - (listDays.length + daysOfPrevMonth.length) % 7 , 
+      (7 - (daysOfPrevMonth.length + listDays.length) % 7) % 7, 
       (int index) => index + 1,
     );
 
-    print("Proximo mes: $daysOfNextMonth");
+    daysOfPrevMonth.removeWhere((day) => day <= 0);
 
     List<String> months = [
       '',
@@ -52,7 +52,7 @@ class _CalendarState extends State<Calendar> {
       'Dezembro',
     ];
 
-    List<String> weekDay = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom"];
+    List<String> weekDay = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom",];
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 14),
@@ -73,7 +73,7 @@ class _CalendarState extends State<Calendar> {
                 children: List.generate(
                   months.length,
                   (index) => Text(
-                    currentDate.month == index ? months[index] : "",
+                    currentMonthIndex == index ? months[index] : "",
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -114,38 +114,74 @@ class _CalendarState extends State<Calendar> {
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 7,
               ), 
-              itemCount: daysOfPrevMonth.length + listDays.length + daysOfNextMonth.length,
-              itemBuilder: (context, index){
-
-                List<int> combinedList = [...daysOfPrevMonth, ...listDays, ...daysOfNextMonth];
-                int day = combinedList[index];
-
-                return InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const TaskScreen())
-                    );
-                  },
-                  child: Container(
+              itemCount: 35,
+              itemBuilder: (context, index){  
+                if(index < daysOfPrevMonth.length){
+                  return Container(
                     margin: const EdgeInsets.all(3),
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
-                      color: (daysOfPrevMonth.contains(day) && daysOfNextMonth.contains(day)) 
-                      ? Colors.black 
-                      : Colors.grey[900],
+                      color: Colors.black,
+                    ),
+                    child: Center(
+                      child: Text(
+                        "${daysOfPrevMonth[index]}",
+                        style: const TextStyle(
+                          fontSize: 20,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  );
+                }else if(index < daysOfPrevMonth.length + listDays.length){
+
+                  int day = listDays[index - daysOfPrevMonth.length];
+
+                  return InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => const TaskScreen())
+                      );
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.all(3),
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.grey[900],
+                      ),
+                      child: Center(
+                        child: Text(
+                          "$day",
+                          style: const TextStyle(
+                            fontSize: 20,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }else{
+                  int day = daysOfNextMonth[index - daysOfPrevMonth.length - listDays.length];
+                  return Container(
+                    margin: const EdgeInsets.all(3),
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.black,
                     ),
                     child: Center(
                       child: Text(
                         "$day",
                         style: const TextStyle(
                           fontSize: 20,
-                          color: Colors.white,
+                          color: Colors.grey,
                         ),
                       ),
                     ),
-                  ),
-                );
+                  );
+                }         
               }
             ),
           ),
