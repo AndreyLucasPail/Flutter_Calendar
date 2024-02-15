@@ -9,7 +9,12 @@ class TaskTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(listTask!.task!),
+      title: Text(
+        listTask!.task!,
+        style: const TextStyle(
+          color: Colors.white,
+        ),
+      ),
     );
   }
 }

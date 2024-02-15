@@ -28,11 +28,12 @@ class DataBaseHelper {
 
   Future<Database> initDb() async {
     final String dbPath = await getDatabasesPath();
+    print("Database path: $dbPath");
     final String path = join(dbPath, "task_db.db");
 
     Database taskDb = await openDatabase(path, version: 1, onCreate: (db, newerVersion) async {
         await db.execute('CREATE TABLE $taskTable ($id INTEGER PRIMARY KEY AUTOINCREMENT, $task TEXT, $dateTime TEXT,'
-        '$day INTEGER, $month INTEGER');
+        '$day INTEGER, $month INTEGER)');
       },
     );
 
@@ -48,6 +49,8 @@ class DataBaseHelper {
         id,
         task,
         dateTime,
+        day,
+        month,
       ],
       where: "idColumn = ?",
       whereArgs: [id],
@@ -92,6 +95,11 @@ class DataBaseHelper {
     );
 
     return listOfTask.map((taskMap) => TaskModel.fromJson(taskMap)).toList();
+  }
+
+  Future deleteDB() async { 
+    Database taskDb = await db;
+    taskDb.delete(taskTable);
   }
 
   // Future<int> updateTask(int id) async {

@@ -76,7 +76,14 @@ class _NewTaskButtonState extends State<NewTaskButton> {
                             ),
                           ),
                         ),
-                      )
+                      ),
+                      SizedBox(height: 10,),
+                      IconButton(
+                        onPressed: (){
+                          helper.deleteDB();                          
+                        }, 
+                        icon: Icon(Icons.delete, color: Colors.black,)
+                      ),
                     ],
                   ),
                 ),
