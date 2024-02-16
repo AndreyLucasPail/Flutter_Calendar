@@ -24,7 +24,6 @@ class _TaskScreenState extends State<TaskScreen> {
     super.initState();
 
     loadTasksForDate(widget.day!, widget.month!);
-    print("${widget.day} --- ${widget.month}");
   }
 
   @override
@@ -39,7 +38,9 @@ class _TaskScreenState extends State<TaskScreen> {
       body: ListView.builder(
         itemCount: tasks.length,
         itemBuilder: (context, index){
-            return TaskTile(listTask: tasks[index],);
+            return TaskTile(
+              listTask: tasks[index],
+            );
           }
         ),        
       floatingActionButton: NewTaskButton(day: widget.day, month: widget.month,),
@@ -50,7 +51,6 @@ class _TaskScreenState extends State<TaskScreen> {
     List<TaskModel> loadedTasks = await helper.getTaskForDate(day, month);
     setState(() {
       tasks = loadedTasks;
-      print(tasks.first);
     });
   }
 }

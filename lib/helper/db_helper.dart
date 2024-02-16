@@ -80,7 +80,7 @@ class DataBaseHelper {
     await taskDb.insert(taskTable, taskMap);
   }
 
-  Future<List<TaskModel>> getTaskForDate(int day, int month) async {
+  Future<List<TaskModel>> getTaskForDate(int taskDay, int taskMonth) async {
     Database taskDb = await db;
 
     List<Map<String, dynamic>> listOfTask = await taskDb.query(
@@ -89,11 +89,11 @@ class DataBaseHelper {
         id,
         task,
         dateTime,
-        day.toString(),
-        month.toString()
+        day,
+        month,
       ],
       where: "$day = ? AND $month = ?",
-      whereArgs: [day, month],
+      whereArgs: [taskDay, taskMonth],
     );
 
     return listOfTask.map((taskMap) => TaskModel.fromJson(taskMap)).toList();

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar/helper/db_helper.dart';
 import 'package:flutter_calendar/model/task_model.dart';
+import 'package:intl/intl.dart';
 
 class NewTaskButton extends StatefulWidget {
   const NewTaskButton({super.key, this.day, this.month});
@@ -15,7 +16,9 @@ class NewTaskButton extends StatefulWidget {
 class _NewTaskButtonState extends State<NewTaskButton> {
 
   final TextEditingController taskController = TextEditingController();
-  DataBaseHelper helper = DataBaseHelper();
+  DataBaseHelper helper = DataBaseHelper(); 
+
+  final String? date = DateFormat("dd/MM/yy - HH:mm").format(DateTime.now());
 
   @override
   void initState() {
@@ -26,6 +29,7 @@ class _NewTaskButtonState extends State<NewTaskButton> {
 
   @override
   Widget build(BuildContext context) {
+
     return FloatingActionButton(
       onPressed: (){
         showModalBottomSheet(
@@ -61,7 +65,7 @@ class _NewTaskButtonState extends State<NewTaskButton> {
                           onPressed: (){
                             TaskModel newTask = TaskModel(
                               task: taskController.text,
-                              date: DateTime.now().toIso8601String(),
+                              date: date,
                               day: widget.day,
                               month: widget.month,
                             );

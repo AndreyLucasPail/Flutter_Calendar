@@ -11,12 +11,34 @@ class TaskTile extends StatelessWidget {
 
     print(listTask!.day);
 
-    return ListTile(
-      title: Text(
-        '${listTask!.task}',
-        style: const TextStyle(
-          color: Colors.white,
-        ),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '${listTask!.date}',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Text(
+                    '${listTask!.task}',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
