@@ -3,34 +3,34 @@ class TaskModel {
   TaskModel({
     this.task,
     this.day,
-    this.dateTime,
+    this.date,
     this.id,
     this.month
   });
 
   String? task;
   int? day;
-  DateTime? dateTime;
+  String? date;
   int? id;
   int? month;
 
   factory TaskModel.fromJson(Map<String, dynamic> json){
     return TaskModel(
-      task : json["task"], 
-      day: json["day"],
-      dateTime: json["dateTime"],
-      id: json["id"],
-      month: json["month"],
+      task : json["taskColumn"], 
+      day: json["dayColumn"],
+      date: json["dateColumn"],
+      id: json["idColumn"],
+      month: json["monthColumn"],
     );
   }
 
   Map<String, dynamic> toJson(){
     return {
-      "task" : task,
-      "day" : day,
-      "dateTime" : dateTime!.toIso8601String(),
-      "id" : id,
-      "month" : month,
+      "taskColumn" : task,
+      "dayColumn" : day,
+      "dateColumn" : date,
+      "idColumn" : id,
+      "monthColumn" : month,
     };
   }
 }

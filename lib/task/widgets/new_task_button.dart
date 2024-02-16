@@ -61,7 +61,7 @@ class _NewTaskButtonState extends State<NewTaskButton> {
                           onPressed: (){
                             TaskModel newTask = TaskModel(
                               task: taskController.text,
-                              dateTime: DateTime.now(),
+                              date: DateTime.now().toIso8601String(),
                               day: widget.day,
                               month: widget.month,
                             );
@@ -77,12 +77,12 @@ class _NewTaskButtonState extends State<NewTaskButton> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 10,),
+                      const SizedBox(height: 10,),
                       IconButton(
                         onPressed: (){
                           helper.deleteDB();                          
                         }, 
-                        icon: Icon(Icons.delete, color: Colors.black,)
+                        icon: const Icon(Icons.delete, color: Colors.black,)
                       ),
                     ],
                   ),

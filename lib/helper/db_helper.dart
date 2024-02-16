@@ -89,6 +89,8 @@ class DataBaseHelper {
         id,
         task,
         dateTime,
+        day.toString(),
+        month.toString()
       ],
       where: "$day = ? AND $month = ?",
       whereArgs: [day, month],

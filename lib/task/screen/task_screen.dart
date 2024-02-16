@@ -24,6 +24,7 @@ class _TaskScreenState extends State<TaskScreen> {
     super.initState();
 
     loadTasksForDate(widget.day!, widget.month!);
+    print("${widget.day} --- ${widget.month}");
   }
 
   @override
@@ -49,6 +50,7 @@ class _TaskScreenState extends State<TaskScreen> {
     List<TaskModel> loadedTasks = await helper.getTaskForDate(day, month);
     setState(() {
       tasks = loadedTasks;
+      print(tasks.first);
     });
   }
 }
