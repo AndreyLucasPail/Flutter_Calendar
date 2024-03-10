@@ -18,9 +18,9 @@ class DataBaseHelper {
   static Database? _db;
 
   Future<Database> get db async {
-    if(_db != null){
+    if (_db != null) {
       return _db!;
-    }else{
+    } else {
       _db = await initDb();
       return _db!;
     }
@@ -31,9 +31,13 @@ class DataBaseHelper {
     print("Database path: $dbPath");
     final String path = join(dbPath, "task_db.db");
 
-    Database taskDb = await openDatabase(path, version: 1, onCreate: (db, newerVersion) async {
-        await db.execute('CREATE TABLE $taskTable ($id INTEGER PRIMARY KEY AUTOINCREMENT, $task TEXT, $dateTime TEXT,'
-        '$day INTEGER, $month INTEGER)');
+    Database taskDb = await openDatabase(
+      path,
+      version: 1,
+      onCreate: (db, newerVersion) async {
+        await db.execute(
+            'CREATE TABLE $taskTable ($id INTEGER PRIMARY KEY AUTOINCREMENT, $task TEXT, $dateTime TEXT,'
+            '$day INTEGER, $month INTEGER)');
       },
     );
 
@@ -65,7 +69,7 @@ class DataBaseHelper {
     List listOfMap = await taskDb.rawQuery("SELECT * FROM $taskTable");
     List<TaskModel> listOftasks = [];
 
-    for(Map<String,dynamic> map in listOfMap){
+    for (Map<String, dynamic> map in listOfMap) {
       listOftasks.add(TaskModel.fromJson(map));
     }
 
@@ -99,17 +103,26 @@ class DataBaseHelper {
     return listOfTask.map((taskMap) => TaskModel.fromJson(taskMap)).toList();
   }
 
-  Future deleteDB() async { 
+  Future deleteDB() async {
     Database taskDb = await db;
     taskDb.delete(taskTable);
+  }
+
+  Future deleteTask(int idTask) async {
+    Database taskDb = await db;
+    taskDb.delete(
+      taskTable,
+      where: "$id = ?",
+      whereArgs: [idTask],
+    );
   }
 
   // Future<int> updateTask(int id) async {
   //   Database taskDb = await db;
 
   //   return await taskDb.update(
-  //     taskTable, 
-      
+  //     taskTable,
+
   //   );
   //}
 }

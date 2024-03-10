@@ -15,7 +15,6 @@ class TaskScreen extends StatefulWidget {
 }
 
 class _TaskScreenState extends State<TaskScreen> {
-
   DataBaseHelper helper = DataBaseHelper();
   List<TaskModel> tasks = [];
 
@@ -35,15 +34,17 @@ class _TaskScreenState extends State<TaskScreen> {
         title: const Text("Tarefas do dia"),
         centerTitle: true,
       ),
+      floatingActionButton: NewTaskButton(
+        day: widget.day,
+        month: widget.month,
+      ),
       body: ListView.builder(
-        itemCount: tasks.length,
-        itemBuilder: (context, index){
+          itemCount: tasks.length,
+          itemBuilder: (context, index) {
             return TaskTile(
               listTask: tasks[index],
             );
-          }
-        ),        
-      floatingActionButton: NewTaskButton(day: widget.day, month: widget.month,),
+          }),
     );
   }
 

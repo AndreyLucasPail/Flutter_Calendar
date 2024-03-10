@@ -14,9 +14,8 @@ class NewTaskButton extends StatefulWidget {
 }
 
 class _NewTaskButtonState extends State<NewTaskButton> {
-
   final TextEditingController taskController = TextEditingController();
-  DataBaseHelper helper = DataBaseHelper(); 
+  DataBaseHelper helper = DataBaseHelper();
 
   final String? date = DateFormat("dd/MM/yy - HH:mm").format(DateTime.now());
 
@@ -29,76 +28,77 @@ class _NewTaskButtonState extends State<NewTaskButton> {
 
   @override
   Widget build(BuildContext context) {
-
     return FloatingActionButton(
-      onPressed: (){
+      onPressed: () {
         showModalBottomSheet(
-          backgroundColor: Colors.black,
-          context: context, 
-          builder: (context){
-            return Card(
-              color: Colors.grey[300],
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30)
-              ),
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [                      
-                      TextFormField(
-                        controller: taskController,
-                        decoration: const InputDecoration(
-                          labelText: "Nova Tarefa",
-                        ),
-                      ),
-                      const SizedBox(height: 50,),
-                      SizedBox(
-                        height: 55,
-                        width: 300,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.orange,
-                            shape: const StadiumBorder()
+            backgroundColor: Colors.black,
+            context: context,
+            builder: (context) {
+              return Card(
+                color: Colors.grey[300],
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30)),
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextFormField(
+                          controller: taskController,
+                          decoration: const InputDecoration(
+                            labelText: "Nova Tarefa",
                           ),
-                          onPressed: (){
-                            TaskModel newTask = TaskModel(
-                              task: taskController.text,
-                              date: date,
-                              day: widget.day,
-                              month: widget.month,
-                            );
+                        ),
+                        const SizedBox(
+                          height: 50,
+                        ),
+                        SizedBox(
+                          height: 55,
+                          width: 300,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.orange,
+                                shape: const StadiumBorder()),
+                            onPressed: () {
+                              TaskModel newTask = TaskModel(
+                                task: taskController.text,
+                                date: date,
+                                day: widget.day,
+                                month: widget.month,
+                              );
 
-                            helper.addTask(newTask);
-                          }, 
-                          child: const Text(
-                            "Salvar tarefa",
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.white
+                              setState(() {
+                                helper.addTask(newTask);
+                              });
+                            },
+                            child: const Text(
+                              "Salvar tarefa",
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 10,),
-                      IconButton(
-                        onPressed: (){
-                          helper.deleteDB();                          
-                        }, 
-                        icon: const Icon(Icons.delete, color: Colors.black,)
-                      ),
-                    ],
+                        const SizedBox(height: 10),
+                        IconButton(
+                          onPressed: () {
+                            helper.deleteDB();
+                          },
+                          icon: const Icon(
+                            Icons.delete,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          }
-        );
+              );
+            });
       },
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30)
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
       backgroundColor: Colors.orange,
       child: const Icon(
         Icons.add,
