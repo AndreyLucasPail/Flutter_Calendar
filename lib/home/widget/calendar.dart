@@ -1,37 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calendar/core/custom_colors.dart';
 import 'package:flutter_calendar/task/screen/task_screen.dart';
 
 class Calendar extends StatefulWidget {
-  const Calendar({super.key,});
+  const Calendar({
+    super.key,
+  });
 
   @override
   State<Calendar> createState() => _CalendarState();
 }
 
 class _CalendarState extends State<Calendar> {
-
   DateTime currentDate = DateTime.now();
-  DateTime currentMonth = DateTime.now();   
+  DateTime currentMonth = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
-
     int daysInMonth = DateTime(currentDate.year, currentDate.month + 1, 0).day;
-    int weekdayOfFirstDay = DateTime(currentDate.year, currentDate.month, 1).weekday;
+    int weekdayOfFirstDay =
+        DateTime(currentDate.year, currentDate.month, 1).weekday;
     int currentMonthIndex = currentDate.month;
 
     List<int> listDays = List<int>.generate(
-      daysInMonth, 
-      (int index) => index + 1, 
+      daysInMonth,
+      (int index) => index + 1,
     );
 
     List<int> daysOfPrevMonth = List<int>.generate(
-      (weekdayOfFirstDay - 1 + 7) % 7, 
-      (index) => DateTime(currentDate.year, currentDate.month, 0).day - (weekdayOfFirstDay - 1) + index,
+      (weekdayOfFirstDay - 1 + 7) % 7,
+      (index) =>
+          DateTime(currentDate.year, currentDate.month, 0).day -
+          (weekdayOfFirstDay - 1) +
+          index,
     ).reversed.toList();
 
     List<int> daysOfNextMonth = List<int>.generate(
-      (7 - (daysOfPrevMonth.length + listDays.length) % 7) % 7, 
+      (7 - (daysOfPrevMonth.length + listDays.length) % 7) % 7,
       (int index) => index + 1,
     );
 
@@ -53,7 +58,15 @@ class _CalendarState extends State<Calendar> {
       'Dezembro',
     ];
 
-    List<String> weekDay = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom",];
+    List<String> weekDay = [
+      "Seg",
+      "Ter",
+      "Qua",
+      "Qui",
+      "Sex",
+      "Sab",
+      "Dom",
+    ];
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 14),
@@ -65,10 +78,17 @@ class _CalendarState extends State<Calendar> {
               IconButton(
                 onPressed: () {
                   setState(() {
-                    currentDate = DateTime(currentDate.year, currentDate.month - 1, currentDate.day);
+                    currentDate = DateTime(
+                      currentDate.year,
+                      currentDate.month - 1,
+                      currentDate.day,
+                    );
                   });
-                }, 
-                icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white,)
+                },
+                icon: const Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: CustomColors.white,
+                ),
               ),
               Row(
                 children: List.generate(
@@ -76,9 +96,10 @@ class _CalendarState extends State<Calendar> {
                   (index) => Text(
                     currentMonthIndex == index ? months[index] : "",
                     style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold
+                      color: CustomColors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 1,
                     ),
                   ),
                 ),
@@ -86,25 +107,29 @@ class _CalendarState extends State<Calendar> {
               IconButton(
                 onPressed: () {
                   setState(() {
-                    currentDate = DateTime(currentDate.year, currentDate.month + 1, currentDate.day);
+                    currentDate = DateTime(currentDate.year,
+                        currentDate.month + 1, currentDate.day);
                   });
-                }, 
-                icon: const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white,)
+                },
+                icon: const Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  color: CustomColors.white,
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 10,),
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: List.generate(
-              weekDay.length, 
+              weekDay.length,
               (index) => Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Text(
                   weekDay[index],
                   style: const TextStyle(
-                    color: Colors.orange,
-                    fontSize: 20
+                    color: CustomColors.orange,
+                    fontSize: 20,
                   ),
                 ),
               ),
@@ -114,35 +139,39 @@ class _CalendarState extends State<Calendar> {
             child: GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 7,
-              ), 
+              ),
               itemCount: 35,
-              itemBuilder: (context, index){  
-                if(index < daysOfPrevMonth.length){
+              itemBuilder: (context, index) {
+                if (index < daysOfPrevMonth.length) {
                   return Container(
                     margin: const EdgeInsets.all(3),
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
-                      color: Colors.black,
+                      color: CustomColors.backgroundColor,
                     ),
                     child: Center(
                       child: Text(
                         "${daysOfPrevMonth[index]}",
                         style: const TextStyle(
                           fontSize: 20,
-                          color: Colors.grey,
+                          color: CustomColors.white,
                         ),
                       ),
                     ),
                   );
-                }else if(index < daysOfPrevMonth.length + listDays.length){
-      
+                } else if (index < daysOfPrevMonth.length + listDays.length) {
                   int day = listDays[index - daysOfPrevMonth.length];
-      
+
                   return InkWell(
                     onTap: () {
                       Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => TaskScreen(day: day, month: currentDate.month,))
+                        MaterialPageRoute(
+                          builder: (context) => TaskScreen(
+                            day: day,
+                            month: currentDate.month,
+                          ),
+                        ),
                       );
                     },
                     child: Container(
@@ -150,46 +179,48 @@ class _CalendarState extends State<Calendar> {
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
-                        color: currentDate.day == day && currentDate.month == currentMonth.month 
-                          ? Colors.orange 
-                          : Colors.grey[900],
+                        color: currentDate.day == day &&
+                                currentDate.month == currentMonth.month
+                            ? CustomColors.orange
+                            : CustomColors.grey900,
                       ),
                       child: Center(
                         child: Text(
                           "$day",
                           style: const TextStyle(
                             fontSize: 20,
-                            color: Colors.white,
+                            color: CustomColors.white,
                           ),
                         ),
                       ),
                     ),
                   );
-                }else{
-                  int day = daysOfNextMonth[index - daysOfPrevMonth.length - listDays.length];
+                } else {
+                  int day = daysOfNextMonth[
+                      index - daysOfPrevMonth.length - listDays.length];
                   return Container(
                     margin: const EdgeInsets.all(3),
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
-                      color: Colors.black,
+                      color: CustomColors.backgroundColor,
                     ),
                     child: Center(
                       child: Text(
                         "$day",
                         style: const TextStyle(
                           fontSize: 20,
-                          color: Colors.grey,
+                          color: CustomColors.white,
                         ),
                       ),
                     ),
                   );
-                }         
-              }
+                }
+              },
             ),
           ),
         ],
       ),
     );
-  }  
+  }
 }

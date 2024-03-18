@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calendar/core/custom_colors.dart';
 import 'package:flutter_calendar/helper/db_helper.dart';
 import 'package:flutter_calendar/home/widget/calendar.dart';
 import 'package:flutter_calendar/model/task_model.dart';
@@ -20,7 +21,8 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    print("${currentDate.day} ---- ${currentDate.month}");
+    print("${currentDate.day} ----- ${currentDate.month}");
+
     if (!tasksLoaded) {
       loadTasksForDate(currentDate.day, currentDate.month);
     }
@@ -28,13 +30,20 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () => updateListTask(),
+    return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: CustomColors.backgroundColor,
         appBar: AppBar(
-          backgroundColor: Colors.black,
-          title: const Text("Calendario"),
+          elevation: 0,
+          backgroundColor: CustomColors.backgroundColor,
+          title: const Text(
+            "Calendario",
+            style: TextStyle(
+              color: CustomColors.white,
+              fontSize: 24,
+              letterSpacing: 1,
+            ),
+          ),
           centerTitle: true,
         ),
         body: SingleChildScrollView(
@@ -43,7 +52,7 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               children: [
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.55,
+                  height: MediaQuery.of(context).size.height * 0.48,
                   width: MediaQuery.of(context).size.width,
                   child: const Calendar(),
                 ),
@@ -51,29 +60,29 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Container(
                       height: 1.5,
-                      width: MediaQuery.of(context).size.width * 0.333,
-                      color: Colors.grey[800],
+                      width: MediaQuery.of(context).size.width * 0.307,
+                      color: CustomColors.white,
                     ),
                     const SizedBox(width: 6),
                     const Text(
                       "Tarefas do Dia",
                       style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 16,
+                        color: CustomColors.white,
+                        fontSize: 18,
+                        letterSpacing: 1,
                       ),
                     ),
                     const SizedBox(width: 6),
                     Container(
                       height: 1.5,
-                      width: MediaQuery.of(context).size.width * 0.333,
-                      color: Colors.grey[800],
+                      width: MediaQuery.of(context).size.width * 0.307,
+                      color: CustomColors.white,
                     ),
                   ],
                 ),
                 const SizedBox(height: 16),
-                tasks != []
-                    ? dayTask()
-                    : const Padding(
+                tasks == []
+                    ? const Padding(
                         padding: EdgeInsets.symmetric(
                           vertical: 36.0,
                           horizontal: 8.0,
@@ -82,12 +91,13 @@ class _HomePageState extends State<HomePage> {
                           child: Text(
                             "Nenhuma tarefa definida para o dia de hoje.",
                             style: TextStyle(
-                              color: Colors.grey,
+                              color: CustomColors.grey,
                               fontSize: 20,
                             ),
                           ),
                         ),
-                      ),
+                      )
+                    : dayTask()
               ],
             ),
           ),
@@ -97,11 +107,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   dayTask() {
-    print("TAREFAS: $tasks");
     return Column(
       children: tasks.map((task) {
         return Card(
-          color: Colors.grey[900],
+          color: CustomColors.grey900,
           child: SizedBox(
             height: MediaQuery.of(context).size.height * 0.1,
             width: MediaQuery.of(context).size.width,
@@ -110,7 +119,7 @@ class _HomePageState extends State<HomePage> {
               child: Text(
                 "${task.task}",
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: CustomColors.white,
                   fontSize: 20,
                 ),
               ),
@@ -122,19 +131,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> loadTasksForDate(int day, int month) async {
-    print("Antes de carregar tarefas");
     List<TaskModel> loadedTasks = await helper.getTaskForDate(day, month);
-    print("tarefas carregadas: $loadedTasks");
 
     setState(() {
       tasks = loadedTasks;
       tasksLoaded = true;
-    });
-  }
-
-  Future<void> updateListTask() async {
-    setState(() {
-      loadTasksForDate(currentDate.day, currentDate.month);
     });
   }
 }

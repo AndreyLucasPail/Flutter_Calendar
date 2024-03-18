@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calendar/core/custom_colors.dart';
 import 'package:flutter_calendar/helper/db_helper.dart';
 import 'package:flutter_calendar/model/task_model.dart';
 import 'package:flutter_calendar/task/widgets/task_tile.dart';
@@ -33,21 +34,30 @@ class _TaskScreenState extends State<TaskScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: const Text("Tarefas do dia"),
-        centerTitle: true,
-      ),
-      floatingActionButton: newTaskbutton(),
-      body: ListView.builder(
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: CustomColors.backgroundColor,
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: CustomColors.backgroundColor,
+          title: const Text(
+            "Tarefas do dia",
+            style: TextStyle(
+              color: CustomColors.white,
+              fontSize: 24,
+              letterSpacing: 1,
+            ),
+          ),
+          centerTitle: true,
+        ),
+        floatingActionButton: newTaskbutton(),
+        body: ListView.builder(
           itemCount: tasks.length,
           itemBuilder: (context, index) {
-            return TaskTile(
-              listTask: tasks[index],
-            );
-          }),
+            return taskCard(tasks[index]);
+          },
+        ),
+      ),
     );
   }
 
@@ -58,15 +68,25 @@ class _TaskScreenState extends State<TaskScreen> {
     });
   }
 
+  taskCard(TaskModel task) {
+    return Dismissible(
+      confirmDismiss: (direction) => dialog(context, task),
+      key: UniqueKey(),
+      child: TaskTile(
+        listTask: task,
+      ),
+    );
+  }
+
   newTaskbutton() {
     return FloatingActionButton(
       onPressed: () {
         showModalBottomSheet(
-            backgroundColor: Colors.black,
+            backgroundColor: CustomColors.black,
             context: context,
             builder: (context) {
               return Card(
-                color: Colors.grey[300],
+                color: CustomColors.backgroundColor,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30)),
                 child: Center(
@@ -77,8 +97,17 @@ class _TaskScreenState extends State<TaskScreen> {
                       children: [
                         TextFormField(
                           controller: taskController,
+                          style: const TextStyle(
+                            color: CustomColors.white,
+                            fontSize: 20,
+                          ),
                           decoration: const InputDecoration(
+                            hoverColor: CustomColors.white,
                             labelText: "Nova Tarefa",
+                            labelStyle: TextStyle(
+                              color: CustomColors.white,
+                              fontSize: 24,
+                            ),
                           ),
                         ),
                         const SizedBox(
@@ -89,7 +118,7 @@ class _TaskScreenState extends State<TaskScreen> {
                           width: 300,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.orange,
+                                backgroundColor: CustomColors.orange,
                                 shape: const StadiumBorder()),
                             onPressed: () {
                               TaskModel newTask = TaskModel(
@@ -110,19 +139,9 @@ class _TaskScreenState extends State<TaskScreen> {
                               "Salvar tarefa",
                               style: TextStyle(
                                 fontSize: 18,
-                                color: Colors.white,
+                                color: CustomColors.white,
                               ),
                             ),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        IconButton(
-                          onPressed: () {
-                            helper.deleteDB();
-                          },
-                          icon: const Icon(
-                            Icons.delete,
-                            color: Colors.black,
                           ),
                         ),
                       ],
@@ -133,11 +152,71 @@ class _TaskScreenState extends State<TaskScreen> {
             });
       },
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-      backgroundColor: Colors.orange,
+      backgroundColor: CustomColors.orange,
       child: const Icon(
         Icons.add,
         size: 30,
       ),
+    );
+  }
+
+  Future<bool?> dialog(BuildContext context, TaskModel task) async {
+    final DataBaseHelper helper = DataBaseHelper();
+
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: CustomColors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          title: const Text(
+            "Remover Tarefa",
+            style: TextStyle(
+              color: CustomColors.black,
+              fontSize: 24,
+              letterSpacing: 1,
+            ),
+          ),
+          content: const Text(
+            "Certeza que deseja remover esta Terefa?",
+            style: TextStyle(
+              color: CustomColors.black,
+              fontSize: 20,
+              letterSpacing: 1,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text(
+                "Cancelar",
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                helper.deleteTask(task.id!);
+                Navigator.pop(context);
+              },
+              child: const Text(
+                "Confirmar",
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
