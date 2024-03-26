@@ -9,4 +9,5 @@ class CustomColors {
   static const Color grey300 = Color(0xFFE0E0E0);
   static const Color white = Color(0xFFFFFFFF);
   static const Color orange = Color(0xFFFF9800);
+  static const Color firefly = Color(0xFF0C2339);
 }

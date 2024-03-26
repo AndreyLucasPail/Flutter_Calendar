@@ -15,13 +15,16 @@ class TaskScreen extends StatefulWidget {
   State<TaskScreen> createState() => _TaskScreenState();
 }
 
-class _TaskScreenState extends State<TaskScreen> {
+class _TaskScreenState extends State<TaskScreen> with TickerProviderStateMixin {
   DataBaseHelper helper = DataBaseHelper();
   List<TaskModel> tasks = [];
 
   final TextEditingController taskController = TextEditingController();
 
   final String? date = DateFormat("dd/MM/yy - HH:mm").format(DateTime.now());
+
+  late AnimationController animationController;
+  late Animation<EdgeInsets> listSlide;
 
   @override
   void initState() {
@@ -30,6 +33,30 @@ class _TaskScreenState extends State<TaskScreen> {
     helper.initDb();
 
     loadTasksForDate(widget.day!, widget.month!);
+
+    animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    );
+
+    listSlide = EdgeInsetsTween(
+      begin: const EdgeInsets.only(bottom: 0.0),
+      end: const EdgeInsets.only(bottom: 80.0),
+    ).animate(
+      CurvedAnimation(
+        parent: animationController,
+        curve: const Interval(0.325, 0.8, curve: Curves.easeInOut),
+      ),
+    );
+
+    animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    animationController.dispose();
   }
 
   @override
@@ -51,11 +78,13 @@ class _TaskScreenState extends State<TaskScreen> {
           centerTitle: true,
         ),
         floatingActionButton: newTaskbutton(),
-        body: ListView.builder(
-          itemCount: tasks.length,
-          itemBuilder: (context, index) {
-            return taskCard(tasks[index]);
-          },
+        body: SingleChildScrollView(
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            children: tasks.map((task) {
+              return taskCard(task, listSlide);
+            }).toList(),
+          ),
         ),
       ),
     );
@@ -68,12 +97,14 @@ class _TaskScreenState extends State<TaskScreen> {
     });
   }
 
-  taskCard(TaskModel task) {
+  Widget taskCard(TaskModel task, Animation<EdgeInsets> animation) {
     return Dismissible(
       confirmDismiss: (direction) => dialog(context, task),
       key: UniqueKey(),
       child: TaskTile(
         listTask: task,
+        animation: animation,
+        counter: task.id! * 0.1,
       ),
     );
   }
@@ -82,74 +113,86 @@ class _TaskScreenState extends State<TaskScreen> {
     return FloatingActionButton(
       onPressed: () {
         showModalBottomSheet(
-            backgroundColor: CustomColors.black,
-            context: context,
-            builder: (context) {
-              return Card(
-                color: CustomColors.backgroundColor,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30)),
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        TextFormField(
-                          controller: taskController,
-                          style: const TextStyle(
-                            color: CustomColors.white,
-                            fontSize: 20,
-                          ),
-                          decoration: const InputDecoration(
-                            hoverColor: CustomColors.white,
-                            labelText: "Nova Tarefa",
-                            labelStyle: TextStyle(
-                              color: CustomColors.white,
-                              fontSize: 24,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 50,
-                        ),
-                        SizedBox(
-                          height: 55,
-                          width: 300,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: CustomColors.orange,
-                                shape: const StadiumBorder()),
-                            onPressed: () {
-                              TaskModel newTask = TaskModel(
-                                task: taskController.text,
-                                date: date,
-                                day: widget.day,
-                                month: widget.month,
-                              );
-
-                              setState(() {
-                                helper.addTask(newTask);
-                                loadTasksForDate(widget.day!, widget.month!);
-                              });
-
-                              Navigator.pop(context);
-                            },
-                            child: const Text(
-                              "Salvar tarefa",
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: CustomColors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+          backgroundColor: CustomColors.black,
+          context: context,
+          builder: (context) {
+            return Card(
+              color: CustomColors.backgroundColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 24.0,
                 ),
-              );
-            });
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "Adicionar uma nova Tarefa",
+                      style: TextStyle(
+                        color: CustomColors.white,
+                        fontSize: 24,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                    const SizedBox(height: 100),
+                    TextFormField(
+                      controller: taskController,
+                      style: const TextStyle(
+                        color: CustomColors.white,
+                        fontSize: 18,
+                      ),
+                      decoration: const InputDecoration(
+                        hoverColor: CustomColors.white,
+                        labelText: "Nova Tarefa",
+                        labelStyle: TextStyle(
+                          color: CustomColors.white,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 50),
+                    SizedBox(
+                      height: 55,
+                      width: 300,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: CustomColors.orange,
+                            shape: const StadiumBorder()),
+                        onPressed: () {
+                          TaskModel newTask = TaskModel(
+                            task: taskController.text,
+                            date: date,
+                            day: widget.day,
+                            month: widget.month,
+                          );
+
+                          setState(() {
+                            helper.addTask(newTask);
+                            loadTasksForDate(widget.day!, widget.month!);
+                          });
+
+                          taskController.clear();
+
+                          Navigator.pop(context);
+                        },
+                        child: const Text(
+                          "Salvar tarefa",
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: CustomColors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
       },
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
       backgroundColor: CustomColors.orange,
@@ -204,6 +247,11 @@ class _TaskScreenState extends State<TaskScreen> {
             TextButton(
               onPressed: () {
                 helper.deleteTask(task.id!);
+
+                setState(() {
+                  loadTasksForDate(widget.day!, widget.month!);
+                });
+
                 Navigator.pop(context);
               },
               child: const Text(

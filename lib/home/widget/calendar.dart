@@ -128,8 +128,9 @@ class _CalendarState extends State<Calendar> {
                 child: Text(
                   weekDay[index],
                   style: const TextStyle(
-                    color: CustomColors.orange,
+                    color: CustomColors.white,
                     fontSize: 20,
+                    letterSpacing: 1,
                   ),
                 ),
               ),
@@ -182,7 +183,7 @@ class _CalendarState extends State<Calendar> {
                         color: currentDate.day == day &&
                                 currentDate.month == currentMonth.month
                             ? CustomColors.orange
-                            : CustomColors.grey900,
+                            : Colors.black45,
                       ),
                       child: Center(
                         child: Text(

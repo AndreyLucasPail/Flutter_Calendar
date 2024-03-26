@@ -21,10 +21,10 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    print("${currentDate.day} ----- ${currentDate.month}");
-
     if (!tasksLoaded) {
-      loadTasksForDate(currentDate.day, currentDate.month);
+      setState(() {
+        loadTasksForDate(currentDate.day, currentDate.month);
+      });
     }
   }
 
@@ -108,19 +108,22 @@ class _HomePageState extends State<HomePage> {
 
   dayTask() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: tasks.map((task) {
-        return Card(
-          color: CustomColors.grey900,
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.1,
-            width: MediaQuery.of(context).size.width,
-            child: Align(
-              alignment: Alignment.center,
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            color: CustomColors.orange,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
               child: Text(
                 "${task.task}",
                 style: const TextStyle(
                   color: CustomColors.white,
-                  fontSize: 20,
+                  fontSize: 24,
                 ),
               ),
             ),
