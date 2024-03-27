@@ -6,22 +6,15 @@ class TaskTile extends StatelessWidget {
   const TaskTile({
     super.key,
     this.listTask,
-    this.animation,
-    this.counter,
   });
 
   final TaskModel? listTask;
-
-  final Animation<EdgeInsets>? animation;
-
-  final double? counter;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
       child: Card(
-        margin: animation!.value * counter!,
         color: CustomColors.orange,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(
@@ -32,6 +25,7 @@ class TaskTile extends StatelessWidget {
           padding: const EdgeInsets.all(10.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
                 '${listTask!.date}',

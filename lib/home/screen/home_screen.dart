@@ -21,11 +21,9 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    if (!tasksLoaded) {
-      setState(() {
-        loadTasksForDate(currentDate.day, currentDate.month);
-      });
-    }
+    setState(() {
+      loadTasksForDate(currentDate.day, currentDate.month);
+    });
   }
 
   @override

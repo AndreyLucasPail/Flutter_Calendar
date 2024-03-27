@@ -23,9 +23,6 @@ class _TaskScreenState extends State<TaskScreen> with TickerProviderStateMixin {
 
   final String? date = DateFormat("dd/MM/yy - HH:mm").format(DateTime.now());
 
-  late AnimationController animationController;
-  late Animation<EdgeInsets> listSlide;
-
   @override
   void initState() {
     super.initState();
@@ -33,30 +30,6 @@ class _TaskScreenState extends State<TaskScreen> with TickerProviderStateMixin {
     helper.initDb();
 
     loadTasksForDate(widget.day!, widget.month!);
-
-    animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 2),
-    );
-
-    listSlide = EdgeInsetsTween(
-      begin: const EdgeInsets.only(bottom: 0.0),
-      end: const EdgeInsets.only(bottom: 80.0),
-    ).animate(
-      CurvedAnimation(
-        parent: animationController,
-        curve: const Interval(0.325, 0.8, curve: Curves.easeInOut),
-      ),
-    );
-
-    animationController.forward();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-
-    animationController.dispose();
   }
 
   @override
@@ -65,6 +38,12 @@ class _TaskScreenState extends State<TaskScreen> with TickerProviderStateMixin {
       child: Scaffold(
         backgroundColor: CustomColors.backgroundColor,
         appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(Icons.arrow_back_ios_new),
+          ),
           elevation: 0,
           backgroundColor: CustomColors.backgroundColor,
           title: const Text(
@@ -78,13 +57,11 @@ class _TaskScreenState extends State<TaskScreen> with TickerProviderStateMixin {
           centerTitle: true,
         ),
         floatingActionButton: newTaskbutton(),
-        body: SingleChildScrollView(
-          child: Stack(
-            alignment: Alignment.bottomCenter,
-            children: tasks.map((task) {
-              return taskCard(task, listSlide);
-            }).toList(),
-          ),
+        body: ListView.builder(
+          itemCount: tasks.length,
+          itemBuilder: (context, index) {
+            return taskCard(tasks[index]);
+          },
         ),
       ),
     );
@@ -97,14 +74,12 @@ class _TaskScreenState extends State<TaskScreen> with TickerProviderStateMixin {
     });
   }
 
-  Widget taskCard(TaskModel task, Animation<EdgeInsets> animation) {
+  Widget taskCard(TaskModel task) {
     return Dismissible(
       confirmDismiss: (direction) => dialog(context, task),
       key: UniqueKey(),
       child: TaskTile(
         listTask: task,
-        animation: animation,
-        counter: task.id! * 0.1,
       ),
     );
   }
