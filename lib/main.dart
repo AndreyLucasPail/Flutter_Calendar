@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calendar/home/screen/home_screen.dart';
+import 'package:flutter_calendar/ui/task/home/screen/home_screen.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Necessário para inicialização assíncrona
-  runApp(const MyApp());  
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(
+    const MyApp(),
+  );
 }
 
 class MyApp extends StatelessWidget {

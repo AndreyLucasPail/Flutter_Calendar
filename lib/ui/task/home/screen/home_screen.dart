@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calendar/core/custom_colors.dart';
+import 'package:flutter_calendar/utils/colors/custom_colors.dart';
 import 'package:flutter_calendar/helper/db_helper.dart';
-import 'package:flutter_calendar/home/widget/calendar.dart';
+import 'package:flutter_calendar/ui/task/home/widget/calendar.dart';
 import 'package:flutter_calendar/model/task_model.dart';
 
 class HomePage extends StatefulWidget {

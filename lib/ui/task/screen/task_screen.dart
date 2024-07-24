@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calendar/core/custom_colors.dart';
+import 'package:flutter_calendar/utils/colors/custom_colors.dart';
 import 'package:flutter_calendar/helper/db_helper.dart';
 import 'package:flutter_calendar/model/task_model.dart';
-import 'package:flutter_calendar/task/widgets/task_tile.dart';
+import 'package:flutter_calendar/ui/task/widgets/task_tile.dart';
 import 'package:intl/intl.dart';
 
 class TaskScreen extends StatefulWidget {

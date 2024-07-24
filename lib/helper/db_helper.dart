@@ -35,8 +35,9 @@ class DataBaseHelper {
       version: 1,
       onCreate: (db, newerVersion) async {
         await db.execute(
-            'CREATE TABLE $taskTable ($id INTEGER PRIMARY KEY AUTOINCREMENT, $task TEXT, $dateTime TEXT,'
-            '$day INTEGER, $month INTEGER)');
+          'CREATE TABLE $taskTable ($id INTEGER PRIMARY KEY AUTOINCREMENT, $task TEXT, $dateTime TEXT,'
+          '$day INTEGER, $month INTEGER)',
+        );
       },
     );
 
@@ -116,12 +117,25 @@ class DataBaseHelper {
     );
   }
 
-  // Future<int> updateTask(int id) async {
-  //   Database taskDb = await db;
+  Future<int> updateTask(
+    int idTask,
+    String task,
+    String dateTime,
+    int day,
+    int month,
+  ) async {
+    Database taskDb = await db;
 
-  //   return await taskDb.update(
-  //     taskTable,
-
-  //   );
-  //}
+    return await taskDb.update(
+      taskTable,
+      {
+        task: task,
+        dateTime: dateTime,
+        "$day": day,
+        "$month": month,
+      },
+      where: "$id = ?",
+      whereArgs: [idTask],
+    );
+  }
 }

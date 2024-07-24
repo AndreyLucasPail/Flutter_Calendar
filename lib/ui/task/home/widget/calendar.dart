@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calendar/core/custom_colors.dart';
-import 'package:flutter_calendar/task/screen/task_screen.dart';
+import 'package:flutter_calendar/utils/colors/custom_colors.dart';
+import 'package:flutter_calendar/ui/task/screen/task_screen.dart';
 
 class Calendar extends StatefulWidget {
   const Calendar({
