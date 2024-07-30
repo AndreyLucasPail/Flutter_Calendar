@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calendar/maneger/task_maneger.dart';
 import 'package:flutter_calendar/utils/colors/custom_colors.dart';
 import 'package:flutter_calendar/helper/db_helper.dart';
 import 'package:flutter_calendar/model/task_model.dart';
 import 'package:flutter_calendar/ui/task/widgets/task_tile.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class TaskScreen extends StatefulWidget {
   const TaskScreen({super.key, this.day, this.month});
@@ -27,9 +29,11 @@ class _TaskScreenState extends State<TaskScreen> with TickerProviderStateMixin {
   void initState() {
     super.initState();
 
-    helper.initDb();
+    final taskManager = Provider.of<TaskManager>(context, listen: false);
 
-    loadTasksForDate(widget.day!, widget.month!);
+    taskManager.getTaskForDateManeger(widget.day!, widget.month!);
+
+    helper.initDb();
   }
 
   @override
@@ -57,21 +61,18 @@ class _TaskScreenState extends State<TaskScreen> with TickerProviderStateMixin {
           centerTitle: true,
         ),
         floatingActionButton: newTaskbutton(),
-        body: ListView.builder(
-          itemCount: tasks.length,
-          itemBuilder: (context, index) {
-            return taskCard(tasks[index]);
+        body: Consumer<TaskManager>(
+          builder: (_, taskManeger, __) {
+            return ListView.builder(
+              itemCount: taskManeger.taskForDateList.length,
+              itemBuilder: (context, index) {
+                return taskCard(taskManeger.taskForDateList[index]);
+              },
+            );
           },
         ),
       ),
     );
-  }
-
-  Future<void> loadTasksForDate(int day, int month) async {
-    List<TaskModel> loadedTasks = await helper.getTaskForDate(day, month);
-    setState(() {
-      tasks = loadedTasks;
-    });
   }
 
   Widget taskCard(TaskModel task) {
@@ -144,10 +145,11 @@ class _TaskScreenState extends State<TaskScreen> with TickerProviderStateMixin {
                             month: widget.month,
                           );
 
-                          setState(() {
-                            helper.addTask(newTask);
-                            loadTasksForDate(widget.day!, widget.month!);
-                          });
+                          context.read<TaskManager>().addTaskManeger(newTask);
+                          context.read<TaskManager>().getTaskForDateManeger(
+                                widget.day!,
+                                widget.month!,
+                              );
 
                           taskController.clear();
 
@@ -169,7 +171,9 @@ class _TaskScreenState extends State<TaskScreen> with TickerProviderStateMixin {
           },
         );
       },
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30),
+      ),
       backgroundColor: CustomColors.orange,
       child: const Icon(
         Icons.add,
@@ -179,8 +183,6 @@ class _TaskScreenState extends State<TaskScreen> with TickerProviderStateMixin {
   }
 
   Future<bool?> dialog(BuildContext context, TaskModel task) async {
-    final DataBaseHelper helper = DataBaseHelper();
-
     return showDialog(
       context: context,
       builder: (context) {
@@ -214,25 +216,25 @@ class _TaskScreenState extends State<TaskScreen> with TickerProviderStateMixin {
               child: const Text(
                 "Cancelar",
                 style: TextStyle(
-                  color: Colors.red,
+                  color: CustomColors.red,
                   fontSize: 20,
                 ),
               ),
             ),
             TextButton(
               onPressed: () {
-                helper.deleteTask(task.id!);
-
-                setState(() {
-                  loadTasksForDate(widget.day!, widget.month!);
-                });
+                context.read<TaskManager>().deleteTaskManeger(task.id!);
+                context.read<TaskManager>().getTaskForDateManeger(
+                      widget.day!,
+                      widget.month!,
+                    );
 
                 Navigator.pop(context);
               },
               child: const Text(
                 "Confirmar",
                 style: TextStyle(
-                  color: Colors.blue,
+                  color: CustomColors.blue,
                   fontSize: 20,
                 ),
               ),

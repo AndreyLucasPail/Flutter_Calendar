@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calendar/maneger/task_maneger.dart';
 import 'package:flutter_calendar/utils/colors/custom_colors.dart';
 import 'package:flutter_calendar/helper/db_helper.dart';
 import 'package:flutter_calendar/ui/task/home/widget/calendar.dart';
 import 'package:flutter_calendar/model/task_model.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,9 +23,8 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    setState(() {
-      loadTasksForDate(currentDate.day, currentDate.month);
-    });
+    final taskManager = Provider.of<TaskManager>(context, listen: false);
+    taskManager.getTaskForDateManeger(currentDate.day, currentDate.month);
   }
 
   @override
@@ -44,70 +45,68 @@ class _HomePageState extends State<HomePage> {
           ),
           centerTitle: true,
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.48,
-                  width: MediaQuery.of(context).size.width,
-                  child: const Calendar(),
-                ),
-                Row(
+        body: Consumer<TaskManager>(
+          builder: (_, taskManager, __) {
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
                   children: [
-                    Container(
-                      height: 1.5,
-                      width: MediaQuery.of(context).size.width * 0.307,
-                      color: CustomColors.white,
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.55,
+                      width: MediaQuery.of(context).size.width,
+                      child: const Calendar(),
                     ),
-                    const SizedBox(width: 6),
-                    const Text(
-                      "Tarefas do Dia",
-                      style: TextStyle(
-                        color: CustomColors.white,
-                        fontSize: 18,
-                        letterSpacing: 1,
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Container(
-                      height: 1.5,
-                      width: MediaQuery.of(context).size.width * 0.307,
-                      color: CustomColors.white,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                tasks == []
-                    ? const Padding(
-                        padding: EdgeInsets.symmetric(
-                          vertical: 36.0,
-                          horizontal: 8.0,
+                    Row(
+                      children: [
+                        Container(
+                          height: 1.5,
+                          width: MediaQuery.of(context).size.width * 0.307,
+                          color: CustomColors.white,
                         ),
-                        child: Center(
-                          child: Text(
-                            "Nenhuma tarefa definida para o dia de hoje.",
-                            style: TextStyle(
-                              color: CustomColors.grey,
-                              fontSize: 20,
-                            ),
+                        const SizedBox(width: 6),
+                        const Text(
+                          "Tarefas do Dia",
+                          style: TextStyle(
+                            color: CustomColors.white,
+                            fontSize: 18,
+                            letterSpacing: 1,
                           ),
                         ),
-                      )
-                    : dayTask()
-              ],
-            ),
-          ),
+                        const SizedBox(width: 6),
+                        Container(
+                          height: 1.5,
+                          width: MediaQuery.of(context).size.width * 0.307,
+                          color: CustomColors.white,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    taskManager.taskForDateList.isNotEmpty
+                        ? dayTask(taskManager)
+                        : const Center(
+                            child: Text(
+                              "Nenhuma tarefa definida para o dia de hoje.",
+                              style: TextStyle(
+                                color: CustomColors.orange,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
   }
 
-  dayTask() {
+  dayTask(TaskManager taskManager) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: tasks.map((task) {
+      children: taskManager.taskForDateList.map((task) {
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 4.0),
           child: Card(
@@ -129,14 +128,5 @@ class _HomePageState extends State<HomePage> {
         );
       }).toList(),
     );
-  }
-
-  Future<void> loadTasksForDate(int day, int month) async {
-    List<TaskModel> loadedTasks = await helper.getTaskForDate(day, month);
-
-    setState(() {
-      tasks = loadedTasks;
-      tasksLoaded = true;
-    });
   }
 }

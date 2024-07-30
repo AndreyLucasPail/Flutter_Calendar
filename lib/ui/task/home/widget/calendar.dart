@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calendar/maneger/task_maneger.dart';
+import 'package:flutter_calendar/model/task_model.dart';
 import 'package:flutter_calendar/utils/colors/custom_colors.dart';
 import 'package:flutter_calendar/ui/task/screen/task_screen.dart';
+import 'package:provider/provider.dart';
 
 class Calendar extends StatefulWidget {
   const Calendar({
@@ -16,10 +19,25 @@ class _CalendarState extends State<Calendar> {
   DateTime currentMonth = DateTime.now();
 
   @override
+  void initState() {
+    super.initState();
+
+    final taskManager = Provider.of<TaskManager>(context, listen: false);
+    taskManager.getAllTasksManeger();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    int daysInMonth = DateTime(currentDate.year, currentDate.month + 1, 0).day;
-    int weekdayOfFirstDay =
-        DateTime(currentDate.year, currentDate.month, 1).weekday;
+    int daysInMonth = DateTime(
+      currentDate.year,
+      currentDate.month + 1,
+      0,
+    ).day;
+    int weekdayOfFirstDay = DateTime(
+      currentDate.year,
+      currentDate.month,
+      1,
+    ).weekday;
     int currentMonthIndex = currentDate.month;
 
     List<int> listDays = List<int>.generate(
@@ -107,8 +125,11 @@ class _CalendarState extends State<Calendar> {
               IconButton(
                 onPressed: () {
                   setState(() {
-                    currentDate = DateTime(currentDate.year,
-                        currentDate.month + 1, currentDate.day);
+                    currentDate = DateTime(
+                      currentDate.year,
+                      currentDate.month + 1,
+                      currentDate.day,
+                    );
                   });
                 },
                 icon: const Icon(
@@ -140,13 +161,17 @@ class _CalendarState extends State<Calendar> {
             child: GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 7,
+                childAspectRatio: 0.8,
               ),
               itemCount: 35,
               itemBuilder: (context, index) {
                 if (index < daysOfPrevMonth.length) {
                   return Container(
                     margin: const EdgeInsets.all(3),
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 8,
+                    ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
                       color: CustomColors.backgroundColor,
@@ -175,25 +200,37 @@ class _CalendarState extends State<Calendar> {
                         ),
                       );
                     },
-                    child: Container(
-                      margin: const EdgeInsets.all(3),
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: currentDate.day == day &&
-                                currentDate.month == currentMonth.month
-                            ? CustomColors.orange
-                            : Colors.black45,
-                      ),
-                      child: Center(
-                        child: Text(
-                          "$day",
-                          style: const TextStyle(
-                            fontSize: 20,
-                            color: CustomColors.white,
-                          ),
-                        ),
-                      ),
+                    child: Consumer<TaskManager>(
+                      builder: (_, task, __) {
+                        return Column(
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.all(3),
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 12,
+                                horizontal: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                color: currentDate.day == day &&
+                                        currentDate.month == currentMonth.month
+                                    ? CustomColors.orange
+                                    : Colors.black45,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "$day",
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    color: CustomColors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            buildCircle(task.taskCircleForDateList),
+                          ],
+                        );
+                      },
                     ),
                   );
                 } else {
@@ -201,7 +238,10 @@ class _CalendarState extends State<Calendar> {
                       index - daysOfPrevMonth.length - listDays.length];
                   return Container(
                     margin: const EdgeInsets.all(3),
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 8,
+                    ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
                       color: CustomColors.backgroundColor,
@@ -221,6 +261,18 @@ class _CalendarState extends State<Calendar> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget buildCircle(List<TaskModel> list) {
+    return Container(
+      height: 6,
+      width: 6,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color:
+            list.isNotEmpty ? CustomColors.grey : CustomColors.backgroundColor,
       ),
     );
   }
