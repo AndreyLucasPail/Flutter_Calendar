@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calendar/maneger/task_maneger.dart';
 import 'package:flutter_calendar/model/task_model.dart';
 import 'package:flutter_calendar/utils/colors/custom_colors.dart';
-import 'package:flutter_calendar/ui/task/screen/task_screen.dart';
+import 'package:flutter_calendar/ui/task/task_screen.dart';
 import 'package:provider/provider.dart';
 
 class Calendar extends StatefulWidget {
   const Calendar({
     super.key,
+    this.allTasksList,
   });
+
+  final List<TaskModel>? allTasksList;
 
   @override
   State<Calendar> createState() => _CalendarState();
@@ -21,9 +24,6 @@ class _CalendarState extends State<Calendar> {
   @override
   void initState() {
     super.initState();
-
-    final taskManager = Provider.of<TaskManager>(context, listen: false);
-    taskManager.getAllTasksManeger();
   }
 
   @override
@@ -161,7 +161,7 @@ class _CalendarState extends State<Calendar> {
             child: GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 7,
-                childAspectRatio: 0.8,
+                childAspectRatio: 0.85,
               ),
               itemCount: 35,
               itemBuilder: (context, index) {
@@ -202,6 +202,9 @@ class _CalendarState extends State<Calendar> {
                     },
                     child: Consumer<TaskManager>(
                       builder: (_, task, __) {
+                        bool hasTask = widget.allTasksList!.any((task) =>
+                            task.day == day && task.month == currentDate.month);
+
                         return Column(
                           children: [
                             Container(
@@ -227,7 +230,9 @@ class _CalendarState extends State<Calendar> {
                                 ),
                               ),
                             ),
-                            buildCircle(task.taskCircleForDateList),
+                            hasTask
+                                ? buildCircle(CustomColors.orange)
+                                : buildCircle(CustomColors.backgroundColor),
                           ],
                         );
                       },
@@ -265,14 +270,13 @@ class _CalendarState extends State<Calendar> {
     );
   }
 
-  Widget buildCircle(List<TaskModel> list) {
+  Widget buildCircle(Color color) {
     return Container(
       height: 6,
       width: 6,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color:
-            list.isNotEmpty ? CustomColors.grey : CustomColors.backgroundColor,
+        color: color,
       ),
     );
   }

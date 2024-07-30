@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar/maneger/task_maneger.dart';
-import 'package:flutter_calendar/ui/task/home/screen/home_screen.dart';
+import 'package:flutter_calendar/ui/home/home_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() async {

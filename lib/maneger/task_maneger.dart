@@ -6,7 +6,7 @@ class TaskManager extends ChangeNotifier {
   final DataBaseHelper _dataBaseHelper = DataBaseHelper();
 
   List<TaskModel> taskForDateList = [];
-  List<TaskModel> taskCircleForDateList = [];
+  List<TaskModel> taskForcurrentDateList = [];
   List<TaskModel> allTasksList = [];
   TaskModel? task;
   Map<String, List<TaskModel>> allTasksMap = {};
@@ -21,9 +21,9 @@ class TaskManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getTaskCircleForDateManeger(int taskDay, int taskMonth) async {
-    //taskCircleForDateList =
-    //  task.where((task) => task.day == day && task.month == month).toList();
+  Future<void> getTaskCurrentDateManeger(int taskDay, int taskMonth) async {
+    taskForcurrentDateList =
+        await _dataBaseHelper.getTaskForDate(taskDay, taskMonth);
     notifyListeners();
   }
 
@@ -39,9 +39,6 @@ class TaskManager extends ChangeNotifier {
 
   Future<void> getAllTasksManeger() async {
     allTasksList = await _dataBaseHelper.getAllTasks();
-
-    for (var task in allTasksList) {}
-
     notifyListeners();
   }
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calendar/maneger/task_maneger.dart';
 import 'package:flutter_calendar/utils/colors/custom_colors.dart';
 import 'package:flutter_calendar/helper/db_helper.dart';
-import 'package:flutter_calendar/ui/task/home/widget/calendar.dart';
+import 'package:flutter_calendar/ui/home/widget/calendar.dart';
 import 'package:flutter_calendar/model/task_model.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +16,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   DataBaseHelper helper = DataBaseHelper();
   List<TaskModel> tasks = [];
+  List<TaskModel> allTasks = [];
   DateTime currentDate = DateTime.now();
   bool tasksLoaded = false;
 
@@ -24,7 +25,8 @@ class _HomePageState extends State<HomePage> {
     super.initState();
 
     final taskManager = Provider.of<TaskManager>(context, listen: false);
-    taskManager.getTaskForDateManeger(currentDate.day, currentDate.month);
+    taskManager.getTaskCurrentDateManeger(currentDate.day, currentDate.month);
+    taskManager.getAllTasksManeger();
   }
 
   @override
@@ -53,9 +55,9 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   children: [
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.55,
+                      height: MediaQuery.of(context).size.height * 0.53,
                       width: MediaQuery.of(context).size.width,
-                      child: const Calendar(),
+                      child: Calendar(allTasksList: taskManager.allTasksList),
                     ),
                     Row(
                       children: [
@@ -82,7 +84,7 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    taskManager.taskForDateList.isNotEmpty
+                    taskManager.taskForcurrentDateList.isNotEmpty
                         ? dayTask(taskManager)
                         : const Center(
                             child: Text(
@@ -106,7 +108,7 @@ class _HomePageState extends State<HomePage> {
   dayTask(TaskManager taskManager) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: taskManager.taskForDateList.map((task) {
+      children: taskManager.taskForcurrentDateList.map((task) {
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 4.0),
           child: Card(

@@ -135,8 +135,9 @@ class _TaskScreenState extends State<TaskScreen> with TickerProviderStateMixin {
                       width: 300,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            backgroundColor: CustomColors.orange,
-                            shape: const StadiumBorder()),
+                          backgroundColor: CustomColors.orange,
+                          shape: const StadiumBorder(),
+                        ),
                         onPressed: () {
                           TaskModel newTask = TaskModel(
                             task: taskController.text,
