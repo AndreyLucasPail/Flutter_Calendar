@@ -46,7 +46,10 @@ class _TaskScreenState extends State<TaskScreen> with TickerProviderStateMixin {
             onPressed: () {
               Navigator.pop(context);
             },
-            icon: const Icon(Icons.arrow_back_ios_new),
+            icon: const Icon(
+              Icons.arrow_back_ios_new,
+              color: CustomColors.white,
+            ),
           ),
           elevation: 0,
           backgroundColor: CustomColors.backgroundColor,
@@ -89,7 +92,7 @@ class _TaskScreenState extends State<TaskScreen> with TickerProviderStateMixin {
     return FloatingActionButton(
       onPressed: () {
         showModalBottomSheet(
-          backgroundColor: CustomColors.black,
+          backgroundColor: CustomColors.backgroundColor,
           context: context,
           builder: (context) {
             return Card(

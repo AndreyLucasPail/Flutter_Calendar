@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
           elevation: 0,
           backgroundColor: CustomColors.backgroundColor,
           title: const Text(
-            "Calendario",
+            "Calendário",
             style: TextStyle(
               color: CustomColors.white,
               fontSize: 24,
